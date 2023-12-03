@@ -11,12 +11,14 @@ def parse_arguments():
     parser.add_argument('--searched_phrase', help='for multi phrase: tag1-tag2-...')
     parser.add_argument('--min_price', type=int)
     parser.add_argument('--max_price', type=int)
-    parser.add_argument('--only_new', type=bool, default=False)
-    parser.add_argument('--sorted_by_price', type=bool, required=False)
-    parser.add_argument('--max_page', required=False, type=int, default=99)
+    parser.add_argument('--only_new', default=False, help='True or False')
+    parser.add_argument('--max_page', type=int, default=99, help='default 99')
     parser.add_argument('--unwanted_phrase', required=False, help='for multi phrase: tag1-tag2-...')
-    parser.add_argument('--filename', required=False, default='occasions')
-    parser.add_argument('--by_date', type=bool, default=False)
+    parser.add_argument(
+        '--filename', required=False, default='occasions', 
+        help='for downloaded occasions, without extension'
+        )
+    parser.add_argument('--by_date', default=False, help='True or False')
 
 
     global args
@@ -32,8 +34,6 @@ def get_max_price():
     return args.max_price
 def get_only_new():
     return args.only_new
-def sorted_by_price():
-    return args.sorted_by_price
 def get_max_page():
     return args.max_page
 def get_unwanted_phrase():
@@ -50,7 +50,6 @@ def print_init_info():
         'min price: ', get_min_price(), '\n',
         'max price: ', get_max_price(), '\n',
         'only new: ', get_only_new(), '\n',
-        'sorted by price: ', sorted_by_price(), '\n',
         'max page: ', get_max_page(), '\n',
         'unwanted phrase: ', get_unwanted_phrase(), '\n',
         'filename: ', get_filename(), '\n',
