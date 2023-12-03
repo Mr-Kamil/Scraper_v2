@@ -20,7 +20,6 @@ def parse_arguments():
         )
     parser.add_argument('--by_date', default=False, help='True or False')
 
-
     global args
     args = parser.parse_args()
     return args
@@ -95,7 +94,7 @@ def main():
 
     process_data(get_filename(), occasion_list, HEADERS, SHEET_NAME)
     open_new_occasions_file(get_filename())
-    print('\nDone.')
+    print('\nDone')
 
 
 if __name__ == '__main__':
