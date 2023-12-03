@@ -26,6 +26,10 @@ class Olx():
         self.by_date = by_date
 
 
+    def get_searched_phrase_list(self) -> list:
+        return [n for n in self.searched_phrase.split('-')]
+
+
     def get_url(self, page: str) -> str:
         self.url = self.base_url + f'/oferty/q-{self.searched_phrase}/'
         self.url += '?'
@@ -101,6 +105,10 @@ class AllegroLokalnie():
         self.max_price = max_price
         self.only_new = only_new
         self.by_date = by_date
+
+
+    def get_searched_phrase_list(self) -> list:
+        return [n for n in self.searched_phrase.split('%20')]
 
 
     def get_url(self, page: int) -> str:
@@ -183,6 +191,10 @@ class Allegro():
         self.max_price = max_price
         self.only_new = only_new
         self.by_date = by_date
+
+
+    def get_searched_phrase_list(self) -> list:
+        return [n for n in self.searched_phrase.split('-')] # TODO
 
 
     def get_url(self, page: int) -> str:

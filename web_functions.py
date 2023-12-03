@@ -37,6 +37,18 @@ def _validate_unwanted_phrase(
     return True
 
 
+def _validate_searched_phrase(
+        title: str, website: object
+        ) -> bool:
+    searched_phrases = website.get_searched_phrase_list()
+
+    for phrase in searched_phrases:
+        if phrase.lower() not in title.lower():
+            return False
+        
+    return True
+
+
 def _format_data(
         data_headers: list, titles: list, price: list, website: object, urls: list, n: int
         ) -> dict:
@@ -57,14 +69,15 @@ def _validate_data(
     
     for n in range(len(titles)):
         if _validate_unwanted_phrase(titles[n], unwanted_phrase):
-            try:
-                price = int(re.match(r'\d+', prices[n].replace(' ', '')).group(0))
-            except:
-                price = 0
+            if _validate_searched_phrase(titles[n], website):
+                try:
+                    price = int(re.match(r'\d+', prices[n].replace(' ', '')).group(0))
+                except:
+                    price = 0
 
-            if int(website.max_price) >= price >= int(website.min_price):
-                data = _format_data(data_headers, titles, price, website, urls, n)
-                yield data
+                if int(website.max_price) >= price >= int(website.min_price):
+                    data = _format_data(data_headers, titles, price, website, urls, n)
+                    yield data
 
 
 def _get_max_page(web_max_page: list, inserted_max_page: int) -> int:
