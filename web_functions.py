@@ -2,51 +2,24 @@ import datetime
 import requests
 from bs4 import BeautifulSoup
 import re
-import json
-
-
-def _get_data_from_page(
-        scrapping_dictionary: dict, position: int, soup: object
-        ) -> str:
-
-    data = scrapping_dictionary[position]
-
-    if position == 'urls_allegro':
-        return(
-            [re.split('" href="|" title="', str(a))[1] 
-             for a in soup.find_all(data[0], class_=data[1])]
-            )
-    elif position == 'max_page_all_lok':
-        return(
-            json.loads(soup.find(scrapping_dictionary[position][0],
-            {scrapping_dictionary[position][1]: True})[scrapping_dictionary[position][1]])
-            [scrapping_dictionary[position][2]]
-                                            )
-    elif position != 'urls':
-        return(
-            [a.get_text() for a in soup.find_all(data[0], class_=data[1])]
-            )
-    else:
-        return(
-            [a['href'] for a in soup.find_all(data[0], class_=data[1])]
-               )
 
 
 def _get_data_from_web(
-        next_page: str, scrapping_dictionary: dict, parser='html.parser'
+        next_page: str, website: object, parser='html.parser'
         ) -> list[dict]:
     
-    data_list = []
-
     page = requests.get(next_page)
     soup = BeautifulSoup(page.content, parser)
 
     if page.status_code != 200:
         print("The next page is not loaded: ", page.status_code)
 
-    for position in scrapping_dictionary:
-        data = _get_data_from_page(scrapping_dictionary, position, soup)
-        data_list.append(data)
+    data_list = []
+
+    data_list.append(website.read_titles(soup))
+    data_list.append(website.read_prices(soup))
+    data_list.append(website.read_urls(soup))
+    data_list.append(website.read_max_page(soup))
 
     return data_list
 
@@ -114,11 +87,9 @@ def get_occasions(
     while True:
         page_num += 1
         next_url = website.get_url(page_num)
-
         titles, prices, urls, web_max_pages = _get_data_from_web(
-            next_url, website.get_scraping_tags()
+            next_url, website
             )
-
         max_page = _get_max_page(web_max_pages, max_page)
 
         print(website, f"{page_num}/{max_page}")
