@@ -157,6 +157,7 @@ class AllegroLokalnie():
     def __str__(self) -> str:
         return self.NAME
 
+
 class Allegro():
     HTML_TAGS = {
         'titles': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 \
