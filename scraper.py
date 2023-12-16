@@ -90,7 +90,8 @@ def main():
 
     olx = create_website_instance(Olx)
     allegro_lokalnie = create_website_instance(AllegroLokalnie)
-    occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS)
+    allegro = create_website_instance(Allegro)
+    occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS)
 
     process_data(get_filename(), occasion_list, HEADERS, SHEET_NAME)
     open_new_occasions_file(get_filename())

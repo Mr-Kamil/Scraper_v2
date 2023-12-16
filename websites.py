@@ -1,5 +1,10 @@
 import json
 import re
+import random
+import time
+from selenium import webdriver
+import requests
+from bs4 import BeautifulSoup
 
 
 class Olx():
@@ -18,6 +23,7 @@ class Olx():
             ) -> None:
         
         self.base_url = 'https://www.olx.pl'
+        self.pre_url = 'https://www.olx.pl'
         self.searched_phrase = searched_phrase
 
         self.min_price = min_price
@@ -80,6 +86,20 @@ class Olx():
             )
 
 
+    def get_soup(self, url, parser='html.parser'):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, parser)
+
+        if page.status_code != 200:
+            print("The next page is not loaded: ", page.status_code)
+
+        return soup
+
+
+    def pause(self):
+        pass
+
+
     def __str__(self) -> str:
         return self.NAME
 
@@ -99,6 +119,7 @@ class AllegroLokalnie():
             ) -> None:
         
         self.base_url = 'https://allegrolokalnie.pl'
+        self.pre_url = 'https://allegrolokalnie.pl'
         self.searched_phrase = searched_phrase.replace('-', '%20')
 
         self.min_price = min_price
@@ -162,21 +183,31 @@ class AllegroLokalnie():
                 )
 
 
+    def get_soup(self, url, parser='html.parser'):
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, parser)
+
+        if page.status_code != 200:
+            print("The next page is not loaded: ", page.status_code)
+
+        return soup
+    
+
+    def pause(self):
+        pass
+
+
     def __str__(self) -> str:
         return self.NAME
 
 
 class Allegro():
     HTML_TAGS = {
-        'titles': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 \
-                   m6ax_n4 mp4t_0 m3h2_0 mryx_0 munh_0 mj7a_4"],
-        'prices': ['span', "mli8_k4 msa3_z4 mqu1_1 mgmw_qw mp0t_ji \
-                   m9qz_yo mgn2_27 mgn2_30_s"],
-        'urls': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 m6ax_n4 \
-                 mp4t_0 m3h2_0 mryx_0 munh_0 mj7a_4"],
-        'max_page': ['span', "_1h7wt mgmw_wo mh36_8 mvrt_8 _6d89c_wwgPl \
-                     _6d89c_oLeFV"]
-        }
+        'titles': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 m6ax_n4 mp4t_0 m3h2_0 mryx_0 munh_0 mj7a_4"],
+        'prices': ['span', "mli8_k4 msa3_z4 mqu1_1 mgmw_qw mp0t_ji m9qz_yo mgn2_27 mgn2_30_s"],
+        'urls': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 m6ax_n4 mp4t_0 m3h2_0 mryx_0 munh_0 mj7a_4"],
+        'max_page': ['span', "_1h7wt mgmw_wo mh36_8 mvrt_8"]
+    }
     NAME = 'Allegro'
 
     def __init__(
@@ -185,7 +216,8 @@ class Allegro():
             ) -> None:
         
         self.base_url = 'https://allegro.pl'
-        self.url = self.base_url + f'/oferty/q/{searched_phrase}/' # TODO
+        self.pre_url = ''
+        self.searched_phrase = searched_phrase.replace('-', '%20')
 
         self.min_price = min_price
         self.max_price = max_price
@@ -194,28 +226,26 @@ class Allegro():
 
 
     def get_searched_phrase_list(self) -> list:
-        return [n for n in self.searched_phrase.split('-')] # TODO
+        return [n for n in self.searched_phrase.split('%20')]
 
 
     def get_url(self, page: int) -> str:
-        self.url = self.base_url + '' # TODO
-
-        if self.only_new.lower() == 'true':
-            self.url += f'nowe'
-
-        self.url += '?'
-
-        if self.by_date.lower() == 'true': # TODO
-            pass
+        self.url = self.base_url + f'/listing?string={self.searched_phrase}'
 
         if self.min_price:
-            self.url += f'price_from={self.min_price}'
+            self.url += f'&price_from={self.min_price}'
 
         if self.max_price:
             self.url += f'&price_to={self.max_price}'
 
+        if self.only_new.lower() == 'true':
+            self.url += '&stan=nowe'
+
+        if self.by_date.lower() == 'true':
+            self.url += '&order=n'
+
         if page:
-            self.url += f'&page={page}'
+            self.url += f'&p={page}'
 
         return self.url
     
@@ -230,7 +260,7 @@ class Allegro():
     def read_prices(self, soup: object) -> list:
         tags = self.HTML_TAGS['prices']
         return(
-            [a.get_text() for a in soup.find_all(tags[0], class_=tags[1])]
+            [a.get_text()[:-3] for a in soup.find_all(tags[0], class_=tags[1])]
             )
 
 
@@ -247,3 +277,23 @@ class Allegro():
         return(
             [a.get_text() for a in soup.find_all(tags[0], class_=tags[1])]
             )
+
+
+    def get_soup(self, url, parser='html.parser'):
+        driver = webdriver.Chrome()
+        driver.get(url)
+        driver.implicitly_wait(random.randint(3, 5))
+        page_source = driver.page_source
+        soup = BeautifulSoup(page_source, parser)
+        driver.quit()
+
+        return soup
+
+
+    def pause(self):
+        time.sleep(random.randint(3, 5))
+
+
+    def __str__(self) -> str:
+        return self.NAME
+    

@@ -5,15 +5,10 @@ import re
 
 
 def _get_data_from_web(
-        next_page: str, website: object, parser='html.parser'
+        next_url: str, website: object
         ) -> list[dict]:
-    
-    page = requests.get(next_page)
-    soup = BeautifulSoup(page.content, parser)
 
-    if page.status_code != 200:
-        print("The next page is not loaded: ", page.status_code)
-
+    soup = website.get_soup(next_url)
     data_list = []
 
     data_list.append(website.read_titles(soup))
@@ -56,7 +51,7 @@ def _format_data(
     data =  {
         data_headers[0]: titles[n], 
         data_headers[1]: price, 
-        data_headers[2]: website.base_url + str(urls[n]), 
+        data_headers[2]: website.pre_url + str(urls[n]), 
         data_headers[3]: str(datetime.datetime.today())[:-7]
         }
     
@@ -100,6 +95,7 @@ def get_occasions(
     while True:
         page_num += 1
         next_url = website.get_url(page_num)
+        website.pause()
         titles, prices, urls, web_max_pages = _get_data_from_web(
             next_url, website
             )
