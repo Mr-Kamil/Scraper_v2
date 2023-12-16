@@ -178,9 +178,13 @@ class AllegroLokalnie():
 
     def read_max_page(self, soup: object) -> list:
         tags = self.HTML_TAGS['max_page']
-        return(
-            json.loads(soup.find(tags[0], {tags[1]: True})[tags[1]]) [tags[2]]
-                )
+        try: 
+            return(
+                json.loads(soup.find(tags[0], {tags[1]: True})[tags[1]]) [tags[2]]
+                    )
+        except:
+            print('An error occured during parsing max_page Olx')
+            return 1
 
 
     def get_soup(self, url, parser='html.parser'):
