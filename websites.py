@@ -284,9 +284,14 @@ class Allegro():
 
 
     def get_soup(self, url, parser='html.parser'):
-        driver = webdriver.Chrome()
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("window-size=1920,1080")
+        chrome_options.add_argument("--headless")
+
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get(url)
         driver.implicitly_wait(random.randint(3, 5))
+        
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, parser)
         driver.quit()
