@@ -13,7 +13,7 @@ class Olx():
         # 'prices': ['p', 'css-10b0gli er34gjf0'],
         'prices': ['p', 'css-tyui9s er34gjf0'],
         # 'urls': ['a', 'css-rc5s2u'],
-        'urls': ['a', 'css-z3gu2d'],
+        'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
         'max_page': ['a', "css-1mi714g"],
         }
     NAME = 'Olx'
@@ -76,10 +76,15 @@ class Olx():
 
     def read_urls(self, soup: object) -> list:
         tags = self.HTML_TAGS['urls']
-        return(
-            [a['href'] for a in soup.find_all(tags[0], class_=tags[1])]
-               )
+        divs = soup.find_all(tags[0], class_=tags[1])
 
+        urls = []
+        for div in divs:
+            a_tag = div.find(tags[2], class_=tags[3])
+            if a_tag and 'href' in a_tag.attrs:
+                urls.append(a_tag['href'])
+
+        return urls
 
     def read_max_page(self, soup: object) -> list:
         tags = self.HTML_TAGS['max_page']
