@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup
 class Olx():
     HTML_TAGS = {
         'titles': ['h6', 'css-16v5mdi er34gjf0'],
-        'prices': ['p', 'css-10b0gli er34gjf0'],
-        'urls': ['a', 'css-rc5s2u'],
+        # 'prices': ['p', 'css-10b0gli er34gjf0'],
+        'prices': ['p', 'css-tyui9s er34gjf0'],
+        # 'urls': ['a', 'css-rc5s2u'],
+        'urls': ['a', 'css-z3gu2d'],
         'max_page': ['a', "css-1mi714g"],
         }
     NAME = 'Olx'
