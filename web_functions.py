@@ -1,5 +1,17 @@
 import datetime
 import re
+import sys
+
+
+if sys.flags.debug:
+    DEBUG = True
+else:
+    DEBUG = False
+
+
+def debug(data):
+    if DEBUG:
+        print(data)
 
 
 def _get_data_from_web(
@@ -7,13 +19,15 @@ def _get_data_from_web(
         ) -> list[dict]:
 
     soup = website.get_soup(next_url)
+    debug(soup)
     data_list = []
 
     data_list.append(website.read_titles(soup))
     data_list.append(website.read_prices(soup))
     data_list.append(website.read_urls(soup))
     data_list.append(website.read_max_page(soup))
-
+    debug(data_list)
+    
     return data_list
 
 
@@ -103,6 +117,7 @@ def get_occasions(
     while True:
         page_num += 1
         next_url = website.get_url(page_num)
+        debug(next_url)
         website.pause()
         titles, prices, urls, web_max_pages = _get_data_from_web(
             next_url, website
