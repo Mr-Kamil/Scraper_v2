@@ -14,10 +14,7 @@ def debug(data):
         print(data)
 
 
-def _get_data_from_web(
-        next_url: str, website: object
-        ) -> list[dict]:
-
+def _get_data_from_web(next_url: str, website: object) -> list[dict]:
     soup = website.get_soup(next_url)
     debug(soup)
     data_list = []
