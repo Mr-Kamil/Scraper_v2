@@ -15,7 +15,8 @@ class Olx():
         # 'prices': ['p', 'css-tyui9s er34gjf0'],
         'prices': ['p', 'css-13afqrm'],
         # 'urls': ['a', 'css-rc5s2u'],
-        'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
+        # 'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
+        'urls': ['div', 'css-u2ayx9', 'a', 'css-qo0cxu'],
         'max_page': ['a', "css-1mi714g"],
         }
     NAME = 'Olx'
