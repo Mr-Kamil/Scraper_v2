@@ -11,7 +11,8 @@ class Olx():
     HTML_TAGS = {
         # 'prices': ['p', 'css-10b0gli er34gjf0'],
         # 'titles': ['h6', 'css-16v5mdi er34gjf0'],
-        'titles': ['h6', 'css-1wxaaza'],
+        # 'titles': ['h6', 'css-1wxaaza'],
+        'titles': ['h4', 'css-1s3qyje'],
         # 'prices': ['p', 'css-tyui9s er34gjf0'],
         'prices': ['p', 'css-13afqrm'],
         # 'urls': ['a', 'css-rc5s2u'],
