@@ -12,9 +12,11 @@ class Olx():
         # 'prices': ['p', 'css-10b0gli er34gjf0'],
         # 'titles': ['h6', 'css-16v5mdi er34gjf0'],
         # 'titles': ['h6', 'css-1wxaaza'],
-        'titles': ['h4', 'css-1s3qyje'],
+        # 'titles': ['h4', 'css-1s3qyje'],
+        'titles': ['h4', 'css-1sq4ur2'],
         # 'prices': ['p', 'css-tyui9s er34gjf0'],
-        'prices': ['p', 'css-13afqrm'],
+        # 'prices': ['p', 'css-13afqrm'],
+        'prices': ['p', 'css-6j1qjp'],
         # 'urls': ['a', 'css-rc5s2u'],
         # 'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
         'urls': ['div', 'css-u2ayx9', 'a', 'css-qo0cxu'],
@@ -49,14 +51,14 @@ class Olx():
         if page:
             self.url += f'page={page}'
 
-        if self.by_date.lower() == 'true':
-            self.url += f'&search%5Border%5D=created_at:desc'
-
         if self.min_price:
             self.url += f'&search%5Bfilter_float_price:from%5D={self.min_price}'
 
         if self.max_price:
             self.url += f'&search%5Bfilter_float_price:to%5D={self.max_price}'
+
+        if self.by_date.lower() == 'true':
+            self.url += f'&search%5Border%5D=created_at:desc'
 
         if self.only_new.lower() == 'true':
             self.url += f'&search%5Bfilter_enum_state%5D%5B0%5D=new'
