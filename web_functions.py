@@ -98,10 +98,10 @@ def _get_max_page(web_max_page: list, inserted_max_page: int) -> int:
 def ensure_data_are_correct(titles, prices, urls):
     if not (len(titles) == len(prices) == len(urls)):
         raise Exception(
-            f"Incorrect scraped data: ,\
-            titles len = {len(titles)},\
-            prices len = {len(prices)},\
-            urls len = {len(urls)})"
+            f"Incorrect scraped data:\n"
+            f"titles len = {len(titles)}\n"
+            f"prices len = {len(prices)}\n"
+            f"urls len = {len(urls)}"
         )
 
 
@@ -119,6 +119,8 @@ def get_occasions(
 
     while True:
         page_num += 1
+        print(f"{website} {page_num}/{max_page}")
+
         next_url = website.get_url(page_num)
         debug(next_url)
         website.pause()
@@ -128,9 +130,6 @@ def get_occasions(
                 next_url, website
                 )
             max_page = _get_max_page(web_max_pages, max_page)
-
-            print(f" === {website} {page_num}/{max_page}")
-
             ensure_data_are_correct(titles, prices, urls)
 
             for data in _validate_data(
@@ -144,7 +143,7 @@ def get_occasions(
                 occasions_list.append(data)
 
         except Exception as e:
-            print(f"ERROR {website.NAME} number - {page_num} \n{next_url} \n{e}")
+            print(f"ERROR \n{next_url} \n{e}")
 
         if page_num == max_page:
             return occasions_list
