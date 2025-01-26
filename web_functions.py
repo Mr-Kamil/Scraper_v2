@@ -17,6 +17,7 @@ def debug(data):
 def _get_data_from_web(next_url: str, website: object) -> list[dict]:
     soup = website.get_soup(next_url)
     debug(soup)
+    _ensure_soup_is_correct(soup)
     data_list = []
 
     data_list.append(website.read_titles(soup))
@@ -104,6 +105,11 @@ def ensure_data_are_correct(titles, prices, urls):
         )
 
 
+def _ensure_soup_is_correct(soup):
+    if "geo.captcha-delivery.com" in str(soup):
+        raise Exception("CAPTCHA solving is required !!")
+
+
 def get_occasions(
         data_headers: list, website: object, unwanted_phrase: list, max_page: int,
         ) -> list[dict]:
@@ -116,24 +122,30 @@ def get_occasions(
         next_url = website.get_url(page_num)
         debug(next_url)
         website.pause()
-        titles, prices, urls, web_max_pages = _get_data_from_web(
-            next_url, website
-            )
-        max_page = _get_max_page(web_max_pages, max_page)
 
-        print(website, f"{page_num}/{max_page}")
+        try:
+            titles, prices, urls, web_max_pages = _get_data_from_web(
+                next_url, website
+                )
+            max_page = _get_max_page(web_max_pages, max_page)
 
-        ensure_data_are_correct(titles, prices, urls)
+            print(f" === {website} {page_num}/{max_page}")
 
-        for data in _validate_data(
-            titles=titles, 
-            website=website, 
-            data_headers=data_headers, 
-            unwanted_phrase=unwanted_phrase, 
-            prices=prices, 
-            urls=urls
-            ):
-            occasions_list.append(data)
+            ensure_data_are_correct(titles, prices, urls)
+
+            for data in _validate_data(
+                titles=titles, 
+                website=website, 
+                data_headers=data_headers, 
+                unwanted_phrase=unwanted_phrase, 
+                prices=prices, 
+                urls=urls
+                ):
+                occasions_list.append(data)
+
+        except Exception as e:
+            print(f"ERROR {website.NAME} number - {page_num} \n{next_url} \n{e}")
 
         if page_num == max_page:
             return occasions_list
+        
