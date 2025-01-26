@@ -91,6 +91,7 @@ def _get_max_page(web_max_page: list, inserted_max_page: int) -> int:
     elif web_max_page == []:
         web_max_page = 1
         
+    print(f"Website real max page: {web_max_page}")
     max_page = min(inserted_max_page, web_max_page)
     return max_page
 
@@ -129,7 +130,9 @@ def get_occasions(
             titles, prices, urls, web_max_pages = _get_data_from_web(
                 next_url, website
                 )
-            max_page = _get_max_page(web_max_pages, max_page)
+            if page_num == 1:
+                max_page = _get_max_page(web_max_pages, max_page)
+
             ensure_data_are_correct(titles, prices, urls)
 
             for data in _validate_data(
