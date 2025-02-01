@@ -19,13 +19,13 @@ def parse_arguments():
 
 def get_filename():
     return args.filename
+
+
 def get_unwanted_phrase(config):
     return [n for n in config['unwanted_phrase'].split('-')]
 
 
 def print_init_info(json_data):
-    print("json_data: ", type(json_data), "\n", json_data)
-
     for index, search_config in enumerate(json_data):
         print(f"\nSearch Configuration {index + 1}:")
         print(
@@ -35,7 +35,7 @@ def print_init_info(json_data):
             'only new: ', search_config["only_new"], '\n',
             'max page: ', search_config["max_page"], '\n',
             'unwanted phrase: ', search_config["unwanted_phrase"], '\n',
-            'by_date: ', search_config["by_date"], '\n',
+            'by_date: ', search_config["by_date"],
         )
 
 
@@ -77,10 +77,10 @@ def main():
     print_init_info(search_configs)
     filename = get_filename()
     all_occasion_list = []
+    print(f"\nOutput datafile name: {filename}")
 
-    for config in search_configs:
-        print(f"Processing search: {config}")
-        print(filename)
+    for index, config in enumerate(search_configs):
+        print(f"\n\nProcessing search {index + 1}: {config}")
 
         olx = create_website_instance(Olx, config)
         allegro_lokalnie = create_website_instance(AllegroLokalnie, config)
@@ -92,7 +92,7 @@ def main():
     process_data(filename, all_occasion_list, HEADERS, SHEET_NAME)
     open_new_occasions_file(filename)
 
-    print('\nAll searches processed. Done')
+    print('\nAll searches processed. \nDONE')
 
 
 if __name__ == '__main__':

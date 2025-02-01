@@ -91,8 +91,9 @@ def _get_max_page(web_max_page: list, inserted_max_page: int) -> int:
     elif web_max_page == []:
         web_max_page = 1
         
-    print(f"Website real max page: {web_max_page}")
     max_page = min(inserted_max_page, web_max_page)
+    print(f"Website real max page: {web_max_page}")
+
     return max_page
 
 
