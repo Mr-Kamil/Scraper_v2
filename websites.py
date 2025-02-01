@@ -5,9 +5,47 @@ import time
 from selenium import webdriver
 import requests
 from bs4 import BeautifulSoup
+from abc import ABC, abstractmethod
 
 
-class Olx():
+class Website(ABC):
+    @abstractmethod
+    def __init__() -> None: ...
+
+
+    def get_searched_phrase_list(self) -> list:
+        return [n for n in self.searched_phrase.split('-')]
+    
+
+    @abstractmethod
+    def get_url() -> str: ...
+
+
+    @abstractmethod
+    def read_titles() -> list: ...
+
+
+    @abstractmethod
+    def read_prices() -> list: ...
+
+    
+    @abstractmethod
+    def read_max_page() -> list: ...
+
+
+    @abstractmethod
+    def get_soup() -> object: ...
+
+
+    @abstractmethod
+    def pause() -> None: ...
+
+
+    @abstractmethod
+    def __str__() -> str: ...
+
+
+class Olx(Website):
     HTML_TAGS = {
         # 'prices': ['p', 'css-10b0gli er34gjf0'],
         # 'titles': ['h6', 'css-16v5mdi er34gjf0'],
@@ -38,10 +76,6 @@ class Olx():
         self.max_price = max_price
         self.only_new = only_new
         self.by_date = by_date
-
-
-    def get_searched_phrase_list(self) -> list:
-        return [n for n in self.searched_phrase.split('-')]
 
 
     def get_url(self, page: str) -> str:
@@ -99,7 +133,7 @@ class Olx():
             )
 
 
-    def get_soup(self, url, parser='html.parser'):
+    def get_soup(self, url, parser='html.parser') -> object:
         page = requests.get(url)
         soup = BeautifulSoup(page.content, parser)
 
@@ -117,7 +151,7 @@ class Olx():
         return self.NAME
 
         
-class AllegroLokalnie():
+class AllegroLokalnie(Website):
     HTML_TAGS = {
         'titles': ['h3', 'mlc-itembox__title'],
         'prices': ['span', 'ml-offer-price__dollars'],
@@ -200,7 +234,7 @@ class AllegroLokalnie():
             return 1
 
 
-    def get_soup(self, url, parser='html.parser'):
+    def get_soup(self, url, parser='html.parser') -> object:
         page = requests.get(url)
         soup = BeautifulSoup(page.content, parser)
 
@@ -218,7 +252,7 @@ class AllegroLokalnie():
         return self.NAME
 
 
-class Allegro():
+class Allegro(Website):
     HTML_TAGS = {
         'titles': ['h2', "mgn2_14 m9qz_yp meqh_en mpof_z0 mqu1_16 m6ax_n4 mp4t_0 m3h2_0 mryx_0 munh_0 mj7a_4"],
         'prices': ['span', "mli8_k4 msa3_z4 mqu1_1 mgmw_qw mp0t_ji m9qz_yo mgn2_27 mgn2_30_s"],
@@ -296,7 +330,7 @@ class Allegro():
             )
 
 
-    def get_soup(self, url, parser='html.parser'):
+    def get_soup(self, url, parser='html.parser') -> object:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("window-size=1920,1080")
         chrome_options.add_argument("--headless")
