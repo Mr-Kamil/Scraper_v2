@@ -57,10 +57,10 @@ class Olx():
         if self.max_price:
             self.url += f'&search%5Bfilter_float_price:to%5D={self.max_price}'
 
-        if self.by_date.lower() == 'true':
+        if self.by_date:
             self.url += f'&search%5Border%5D=created_at:desc'
 
-        if self.only_new.lower() == 'true':
+        if self.only_new:
             self.url += f'&search%5Bfilter_enum_state%5D%5B0%5D=new'
 
         return self.url
@@ -148,12 +148,12 @@ class AllegroLokalnie():
     def get_url(self, page: int) -> str:
         self.url = self.base_url + f'/oferty/q/{self.searched_phrase}/'
         
-        if self.only_new.lower() == 'true':
+        if self.only_new:
             self.url += f'nowe'
 
         self.url += '?'
 
-        if self.by_date.lower() == 'true':
+        if self.by_date:
             pass
 
         if self.min_price:
@@ -255,10 +255,10 @@ class Allegro():
         if self.max_price:
             self.url += f'&price_to={self.max_price}'
 
-        if self.only_new.lower() == 'true':
+        if self.only_new:
             self.url += '&stan=nowe'
 
-        if self.by_date.lower() == 'true':
+        if self.by_date:
             self.url += '&order=n'
 
         if page:
