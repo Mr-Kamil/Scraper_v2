@@ -12,7 +12,7 @@ def parse_arguments():
     parser.add_argument('--searches', required=False, 
                         help='JSON string or file path')
     parser.add_argument('--filename', required=False, default='occasions', 
-                        help='Filename without extension')
+                        help='Filename without extension, to save scraped data')
 
     global args
     args = parser.parse_args()
