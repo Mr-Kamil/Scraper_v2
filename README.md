@@ -1,15 +1,17 @@
 This web scraper searches through Olx, Allegro and Allegro Lokalnie for items with the phrases you specify. It also utilizes maximum and minimum price filters, along with other settings. This is an upgrade to my older scraper project, designed for more flexible code, easier use, and refactoring.
 
-Allegro currently blocks scraping, so in my program, Selenium web scraping with ChromeDriver is implemented to avoid Allegro blockades. You need to install ChromeDriver in order to scrape Allegro.
+Allegro currently blocks scraping, so in my program, Selenium web scraping with ChromeDriver is implemented to bypass Allegro's blockades. You need to install ChromeDriver in order to scrape Allegro. Sometimes it doesn’t work either, as Allegro requires CAPTCHA solving, which is not implemented in the code.
 
 Example .bat file to run:
 <br />
+```batch
 python scraper.py ^
 --searches="C:/path/to/example.json" ^
 --filename=example_data
-
+```
 Example .json file to run:
 <br />
+```json
 [
     {
         "searched_phrase": "phrase_1",
@@ -30,6 +32,9 @@ Example .json file to run:
         "by_date": false
     }
 ]
-
+```
 For additional help, type:
-<br />python scraper.py --help
+<br />
+```cmd
+python scraper.py --help
+```
