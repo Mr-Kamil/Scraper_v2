@@ -9,11 +9,20 @@ import json
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--searches', required=False, help='JSON string with multiple searches')
-    parser.add_argument('--filename', required=False, default='occasions', help='Filename without extension')
+    parser.add_argument('--searches', required=False, 
+                        help='JSON string or file path')
+    parser.add_argument('--filename', required=False, default='occasions', 
+                        help='Filename without extension')
 
     global args
     args = parser.parse_args()
+    
+    if os.path.exists(args.searches):
+        with open(args.searches, 'r') as f:
+            args.searches = json.load(f)
+    else:
+        args.searches = json.loads(args.searches)
+
     return args
 
 
@@ -73,7 +82,7 @@ def main():
 
     parse_arguments()
 
-    search_configs = json.loads(args.searches)
+    search_configs = args.searches
     print_init_info(search_configs)
     filename = get_filename()
     all_occasion_list = []
