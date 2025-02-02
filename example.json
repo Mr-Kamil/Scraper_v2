@@ -1,0 +1,20 @@
+[
+    {
+        "searched_phrase": "phrase_1",
+        "min_price": 10,
+        "max_price": 1000,
+        "only_new": false,
+        "max_page": 2,
+        "unwanted_phrase": "unwanted_phrase_1",
+        "by_date": true
+    },
+    {
+        "searched_phrase": "phrase_2",
+        "min_price": 20,
+        "max_price": 2000,
+        "only_new": true,
+        "max_page": 4,
+        "unwanted_phrase": "unwanted_phrase_2",
+        "by_date": false
+    }
+]
