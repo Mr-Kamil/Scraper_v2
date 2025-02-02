@@ -31,7 +31,12 @@ def get_filename():
 
 
 def get_unwanted_phrase(config):
-    return [n for n in config['unwanted_phrase'].split('-')]
+    if config["unwanted_phrase"]:
+        unwanted_phrase = config["unwanted_phrase"].split("-")
+    else:
+        unwanted_phrase = []
+
+    return unwanted_phrase
 
 
 def print_init_info(json_data):
