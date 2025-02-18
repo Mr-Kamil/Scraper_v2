@@ -1,95 +1,82 @@
+import sqlite3
 import pandas as pd
-import csv
 import os
-import datetime
 
 
-def _make_csv_file(
-        exists: bool, data_file_path: str, fresh_data: list[dict], headers: list
-        ) -> None:
+def _create_database(db_name: str, table_name: str, headers: list) -> None:
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
     
-    with open(data_file_path, 'a', newline='', encoding='utf-8') as data_file_csv_write:
-        writer = csv.DictWriter(
-            data_file_csv_write, fieldnames=headers, lineterminator='\n'
-            )
-
-        if not exists:
-            writer.writeheader()
-        writer.writerow({headers[3]: str(datetime.datetime.today())[:-7]})
-
-        for output_list_row in fresh_data:
-            writer.writerow(output_list_row)
-
-
-def _prepare_data(
-        file_exists: bool, headers: list, duplicates_data: list[dict], data_file_path: str
-        ) -> list[dict]:
+    columns = f"({headers[0]} TEXT PRIMARY KEY, {headers[1]} TEXT, {headers[2]} TEXT, {headers[3]} TEXT)"
+    cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} {columns}")
     
-    if not file_exists:
-        no_duplicates_data = duplicates_data
-        return no_duplicates_data
-
-    no_duplicates_data = []
-    reader_list = _csv_to_dict_list(data_file_path, headers)
-
-    for data_list_row in duplicates_data:
-        if data_list_row[headers[2]] + str(data_list_row[headers[1]]) not in reader_list:
-            no_duplicates_data.append(data_list_row)
-    return no_duplicates_data
+    conn.commit()
+    conn.close()
 
 
-def _remove_duplicates(
-        dictionary_list: list[dict], headers: list
-        ) -> list[dict]:
+def _insert_data(
+    db_name: str, table_name: str, fresh_data: list[dict], headers: list) -> None:
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
     
+    for data in fresh_data:
+        cursor.execute(
+            f"""
+            INSERT OR IGNORE INTO {table_name} ({', '.join(headers)}) 
+            VALUES (?, ?, ?, ?)
+            """,
+            (data[headers[0]], data[headers[1]], data[headers[2]], data[headers[3]])
+        )
+    
+    conn.commit()
+    conn.close()
+
+def _fetch_existing_data(db_name: str, table_name: str, headers: list) -> set:
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT {headers[2]}, {headers[1]} FROM {table_name}")
+    
+    existing_data = {f"{row[0]}{row[1]}" for row in cursor.fetchall()}
+    conn.close()
+    return existing_data
+
+def _remove_duplicates(data_list: list[dict], headers: list, 
+                       existing_data: set) -> list[dict]:
     no_duplicates_list = []
-    seen_value = set()
-
-    for dictionary in dictionary_list:
-        if dictionary[headers[2]] not in seen_value:
-            no_duplicates_list.append(dictionary)
-            seen_value.add(dictionary[headers[2]])
-
+    seen_values = set(existing_data)
+    
+    for item in data_list:
+        key = f"{item[headers[2]]}{item[headers[1]]}"
+        if key not in seen_values:
+            no_duplicates_list.append(item)
+            seen_values.add(key)
+    
     return no_duplicates_list
 
 
-def _csv_to_dict_list(file_path: str, headers: list) -> list:
-    csv_input = open(file_path, 'r', newline='', encoding='utf-8')
-    reader = csv.DictReader(csv_input)
-
-    return [row[headers[2]] + row[headers[1]] for row in reader]
-
-
-def _check_file_exists(file_path: str) -> bool:
-    if os.path.exists(file_path):
-        return True
-    return False
-
-
-def _make_xlsx_file(
-        input_data: list[dict], data_file_path: str, sheet_name: str
-        ) -> None:
+def _export_to_excel(db_name: str, table_name: str, output_filename: str, 
+                     sheet_name: str) -> None:
+    conn = sqlite3.connect(db_name)
+    df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+    conn.close()
     
-    df = pd.DataFrame(input_data)
-    writer = pd.ExcelWriter(
-        'new_' + data_file_path.split('.')[0] + '.xlsx', engine='xlsxwriter'
-        )
+    writer = pd.ExcelWriter(output_filename, engine='xlsxwriter')
     df.to_excel(writer, index=False, sheet_name=sheet_name)
-
+    
     for i, column in enumerate(df.columns):
         column_width = max(df[column].astype(str).map(len).max(), len(column)) + 1
         writer.sheets[sheet_name].set_column(i, i, column_width)
-
+    
     writer._save()
 
 
-def process_data(
-        filename: str, data_with_duplicates: list, headers: list, sheet_name: str
-        ) -> None:
-    filename = f"{filename}.csv"
-    no_duplicates_data = _remove_duplicates(data_with_duplicates, headers)
-    exists = _check_file_exists(filename)
-    fresh_data = _prepare_data(exists, headers, no_duplicates_data, filename)
-
-    _make_csv_file(exists, filename, fresh_data, headers)
-    _make_xlsx_file(fresh_data, filename, sheet_name)
+def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict], 
+                 headers: list, sheet_name: str) -> None:
+    _create_database(db_name, table_name, headers)
+    existing_data = _fetch_existing_data(db_name, table_name, headers)
+    fresh_data = _remove_duplicates(data_with_duplicates, headers, existing_data)
+    
+    if fresh_data:
+        _insert_data(db_name, table_name, fresh_data, headers)
+    
+    _export_to_excel(db_name, table_name, f"{table_name}.xlsx", sheet_name)

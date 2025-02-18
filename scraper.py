@@ -103,7 +103,7 @@ def main():
         occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
         all_occasion_list.extend(occasion_list)
 
-    process_data(filename, all_occasion_list, HEADERS, SHEET_NAME)
+    process_data(f"{filename}.db", 'table_name_1', all_occasion_list, HEADERS, SHEET_NAME)
     open_new_occasions_file(filename)
 
     print('\nAll searches processed. \nDONE')
