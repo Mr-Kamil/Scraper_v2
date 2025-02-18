@@ -53,9 +53,9 @@ def print_init_info(json_data):
         )
 
 
-def open_new_occasions_file(filename):
+def open_database(filename):
     current_directory = os.getcwd()
-    os.system(r'start ' + rf"{current_directory}\new_{filename}.xlsx")
+    os.system(r'start ' + rf"{current_directory}\{filename}.db")
 
 
 def create_website_instance(website_class, json):
@@ -83,7 +83,6 @@ def create_occasion_list(websites, headers, config):
 
 def main():
     HEADERS = ['TITLE', 'PRICE', 'URL', 'DATE']
-    SHEET_NAME = 'Occasions'
 
     parse_arguments()
 
@@ -100,11 +99,12 @@ def main():
         allegro_lokalnie = create_website_instance(AllegroLokalnie, config)
         allegro = create_website_instance(Allegro, config)
 
-        occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
+        # occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
+        occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS, config)
         all_occasion_list.extend(occasion_list)
+        process_data(f"{filename}.db", config["searched_phrase"], all_occasion_list, HEADERS)
 
-    process_data(f"{filename}.db", 'table_name_1', all_occasion_list, HEADERS, SHEET_NAME)
-    open_new_occasions_file(filename)
+    open_database(filename)
 
     print('\nAll searches processed. \nDONE')
 
