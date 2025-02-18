@@ -1,6 +1,4 @@
 import sqlite3
-import pandas as pd
-import os
 
 
 def _create_database(db_name: str, table_name: str, headers: list) -> None:
@@ -31,6 +29,7 @@ def _insert_data(
     conn.commit()
     conn.close()
 
+
 def _fetch_existing_data(db_name: str, table_name: str, headers: list) -> set:
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -39,6 +38,7 @@ def _fetch_existing_data(db_name: str, table_name: str, headers: list) -> set:
     existing_data = {f"{row[0]}{row[1]}" for row in cursor.fetchall()}
     conn.close()
     return existing_data
+
 
 def _remove_duplicates(data_list: list[dict], headers: list, 
                        existing_data: set) -> list[dict]:
@@ -54,22 +54,6 @@ def _remove_duplicates(data_list: list[dict], headers: list,
     return no_duplicates_list
 
 
-def _export_to_excel(db_name: str, table_name: str, output_filename: str, 
-                     sheet_name: str) -> None:
-    conn = sqlite3.connect(db_name)
-    df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-    conn.close()
-    
-    writer = pd.ExcelWriter(output_filename, engine='xlsxwriter')
-    df.to_excel(writer, index=False, sheet_name=sheet_name)
-    
-    for i, column in enumerate(df.columns):
-        column_width = max(df[column].astype(str).map(len).max(), len(column)) + 1
-        writer.sheets[sheet_name].set_column(i, i, column_width)
-    
-    writer._save()
-
-
 def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict], 
                  headers: list, sheet_name: str) -> None:
     _create_database(db_name, table_name, headers)
@@ -78,5 +62,3 @@ def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict]
     
     if fresh_data:
         _insert_data(db_name, table_name, fresh_data, headers)
-    
-    _export_to_excel(db_name, table_name, f"{table_name}.xlsx", sheet_name)
