@@ -93,8 +93,9 @@ def main():
     search_configs = args.searches
     print_init_info(search_configs)
     filename = get_filename()
-    all_occasion_list = []
-    print(f"\nOutput datafile name: {filename}")
+    print(f"\nOutput database file name: {filename}")
+
+    summary = []
 
     for index, config in enumerate(search_configs):
         print(f"\n\nProcessing search {index + 1}: {config}")
@@ -105,13 +106,17 @@ def main():
 
         # occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
         occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS, config)
-        all_occasion_list.extend(occasion_list)
 
         table_name = _create_table_name(config["searched_phrase"])
-        process_data(f"{filename}.db", table_name, all_occasion_list, HEADERS)
+        process_data(f"{filename}.db", table_name, occasion_list, HEADERS)
+        summary.append(f"{table_name:<20} {len(occasion_list)} new items")
+
+
+    print('\nAll searches processed. \nDONE\n')
+    print('table name:')
+    print(*summary, sep='\n')
 
     open_database(filename)
-    print('\nAll searches processed. \nDONE')
 
 
 if __name__ == '__main__':
