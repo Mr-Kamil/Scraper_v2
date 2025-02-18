@@ -81,6 +81,10 @@ def create_occasion_list(websites, headers, config):
     return occasion_list
 
 
+def _create_table_name(raw_name):
+    return raw_name.replace('-', '_')
+
+
 def main():
     HEADERS = ['TITLE', 'PRICE', 'URL', 'DATE']
 
@@ -102,10 +106,11 @@ def main():
         # occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
         occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS, config)
         all_occasion_list.extend(occasion_list)
-        process_data(f"{filename}.db", config["searched_phrase"], all_occasion_list, HEADERS)
+
+        table_name = _create_table_name(config["searched_phrase"])
+        process_data(f"{filename}.db", table_name, all_occasion_list, HEADERS)
 
     open_database(filename)
-
     print('\nAll searches processed. \nDONE')
 
 
