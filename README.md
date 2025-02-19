@@ -1,40 +1,122 @@
-This web scraper searches through Olx, Allegro and Allegro Lokalnie for items with the phrases you specify. It also utilizes maximum and minimum price filters, along with other settings. This is an upgrade to my older scraper project, designed for more flexible code, easier use, and refactoring.
+# Scraper_v2
 
-Allegro currently blocks scraping, so in my program, Selenium web scraping with ChromeDriver is implemented to bypass Allegro's blockades. You need to install ChromeDriver in order to scrape Allegro. Sometimes it doesn’t work either, as Allegro requires CAPTCHA solving, which is not implemented in the code.
+🚀 **Scraper_v2** is a web scraper that searches through **OLX, Allegro, and Allegro Lokalnie** for items matching specified keywords. It includes **minimum and maximum price filters**, along with other customizable settings.
 
-Example .bat file to run:
-<br />
+This is an upgraded version of my previous scraper, offering:
+- ✅ **More flexible and reusable code**
+- ✅ **Easier usage**
+- ✅ **Ability to run multiple configurations in one go**
+- ✅ **Saving data to different tables within a single database**
+- ✅ **Handling HTTP errors effectively**
+
+---
+
+## ⚠️ Allegro Scraping Notice  
+Allegro has strong anti-scraping measures, so **Scraper_v2** implements **Selenium with ChromeDriver** to bypass these restrictions.  
+
+However, please note:  
+- **ChromeDriver installation is required** to scrape Allegro.  
+- **CAPTCHA solving is NOT implemented**, meaning scraping may still fail if CAPTCHA is triggered.
+
+---
+
+## 📌 Features
+✔️ **Search multiple marketplaces** (OLX, Allegro, Allegro Lokalnie)  
+✔️ **Filter by price range** (min/max)  
+✔️ **Support for multiple configurations in one run**  
+✔️ **Save data to an SQLite database**  
+✔️ **Error handling for HTTP issues**  
+
+---
+
+## 📂 Installation & Usage  
+
+### 🔹 1. Clone the Repository  
+```sh
+git clone https://github.com/yourusername/Scraper_v2.git
+cd Scraper_v2
+```
+
+### 🔹 2. Install Required Packages  
+```sh
+pip install -r requirements.txt
+```
+
+### 🔹 3. Install ChromeDriver  
+Download and install **ChromeDriver** from the [official website](https://sites.google.com/chromium.org/driver/).  
+Ensure that `chromedriver.exe` is **added to your system's PATH** or placed in the project directory.
+
+### ✅ Ready to Go! 🚀  
+
+---
+
+## 🔧 Example Usage  
+
+### ▶️ **Running the Scraper with a `.bat` File**
+Create a `.bat` file with the following content:  
 ```batch
 python scraper.py ^
 --searches="C:/path/to/example.json" ^
---filename=example_data
+--db_name=database_1
 ```
-Example .json file to run:
-<br />
+Run the `.bat` file to execute the scraper.
+
+---
+
+### ▶️ **Example `.json` Configuration File**  
+Save the following JSON structure in a file (e.g., `config.json`):  
 ```json
 [
     {
-        "searched_phrase": "phrase_1",
+        "searched_phrase": "laptop",
         "min_price": 10,
         "max_price": 1000,
         "only_new": false,
         "max_page": 2,
-        "unwanted_phrase": "unwanted_phrase_1",
+        "unwanted_phrases": "broken,damaged",
         "by_date": true
     },
     {
-        "searched_phrase": "phrase_2",
+        "searched_phrase": "smartphone",
         "min_price": 20,
         "max_price": 2000,
         "only_new": true,
         "max_page": 4,
-        "unwanted_phrase": "unwanted_phrase_2",
+        "unwanted_phrases": "cracked,defective",
         "by_date": false
     }
 ]
 ```
-For additional help, type:
-<br />
-```cmd
+
+---
+
+### ▶️ **Running the Scraper from the Command Line**
+Run the scraper with a JSON config file:  
+```sh
+python scraper.py --searches="C:/path/to/config.json" --db_name=my_database
+```
+
+Or use inline parameters:  
+```sh
+python scraper.py --searches="[{
+    \"searched_phrase\": \"laptop\", 
+    \"min_price\": 10, 
+    \"max_price\": 1000, 
+    \"only_new\": false, 
+    \"max_page\": 5, 
+    \"unwanted_phrases\": \"\", 
+    \"by_date\": true
+}]" --db_name=database_2
+```
+
+---
+
+### ℹ️ **Additional Help**
+To see available options and usage instructions, run:  
+```sh
 python scraper.py --help
 ```
+---
+
+## 📜 License  
+📌 This project is **open-source** and licensed under the **MIT License**. Feel free to contribute and improve it! 🚀
