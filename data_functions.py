@@ -5,7 +5,8 @@ def _create_database(db_name: str, table_name: str, headers: list) -> None:
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     
-    columns = f"({headers[0]} TEXT, {headers[1]} TEXT, {headers[2]} TEXT PRIMARY KEY, {headers[3]} TEXT)"
+    columns = f"({headers[0]} TEXT, {headers[1]} TEXT, {headers[2]} TEXT, {headers[3]} TEXT, "
+    columns += f"PRIMARY KEY ({headers[1]}, {headers[2]}))"
     cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} {columns}")
     
     conn.commit()
@@ -35,39 +36,9 @@ def _insert_data(
     return inserted_count
 
 
-def _fetch_existing_data(db_name: str, table_name: str, headers: list) -> set:
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT {headers[2]}, {headers[1]} FROM {table_name}")
-    
-    existing_data = {f"{row[0]}{row[1]}" for row in cursor.fetchall()}
-    conn.close()
-    return existing_data
-
-
-def _remove_duplicates(data_list: list[dict], headers: list, 
-                       existing_data: set) -> list[dict]:
-    no_duplicates_list = []
-    seen_values = set(existing_data)
-    
-    for item in data_list:
-        key = f"{item[headers[2]]}{item[headers[1]]}"
-        if key not in seen_values:
-            no_duplicates_list.append(item)
-            seen_values.add(key)
-    
-    return no_duplicates_list
-
-
-def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict], 
+def process_data(db_name: str, table_name: str, data: list[dict], 
                  headers: list, summary: list) -> None:
     _create_database(db_name, table_name, headers)
-    existing_data = _fetch_existing_data(db_name, table_name, headers)
-    fresh_data = _remove_duplicates(data_with_duplicates, headers, existing_data)
-        
-    if fresh_data:
-        inserted_count = _insert_data(db_name, table_name, fresh_data, headers)
-    else:
-        inserted_count = 0
+    inserted_count = _insert_data(db_name, table_name, data, headers)
 
-    summary.append(f"{table_name:<20} {inserted_count} new of {len(data_with_duplicates)} items")
+    summary.append(f"{table_name:<20} {inserted_count} new items")
