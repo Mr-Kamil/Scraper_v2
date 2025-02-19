@@ -14,6 +14,10 @@ def debug(data):
         print(data)
 
 
+class CaptchaRequiredException(Exception):
+    pass
+
+
 def _get_data_from_web(next_url: str, website: object) -> list[dict]:
     soup = website.get_soup(next_url)
     debug(soup)
@@ -109,7 +113,7 @@ def ensure_data_are_correct(titles, prices, urls):
 
 def _ensure_soup_is_correct(soup):
     if "geo.captcha-delivery.com" in str(soup):
-        raise Exception("CAPTCHA solving is required !!")
+        raise CaptchaRequiredException("CAPTCHA solving is required !!")
 
 
 def get_occasions(
@@ -145,6 +149,11 @@ def get_occasions(
                 urls=urls
                 ):
                 occasions_list.append(data)
+
+        except CaptchaRequiredException as e:
+            print(f"ERROR: {e} - skipping this website")
+            return occasions_list
+            # if a CAPTCHA is required, it will be required on all pages of this site
 
         except Exception as e:
             print(f"ERROR \n{next_url} \n{e}")
