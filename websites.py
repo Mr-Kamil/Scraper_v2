@@ -347,7 +347,7 @@ class Allegro(Website):
 
 
     def pause(self):
-        time.sleep(random.randint(3, 5))
+        time.sleep(random.uniform(2, 5))
 
 
     def __str__(self) -> str:
