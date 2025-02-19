@@ -5,7 +5,7 @@ def _create_database(db_name: str, table_name: str, headers: list) -> None:
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     
-    columns = f"({headers[0]} TEXT PRIMARY KEY, {headers[1]} TEXT, {headers[2]} TEXT, {headers[3]} TEXT)"
+    columns = f"({headers[0]} TEXT, {headers[1]} TEXT, {headers[2]} TEXT PRIMARY KEY, {headers[3]} TEXT)"
     cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} {columns}")
     
     conn.commit()
@@ -13,10 +13,12 @@ def _create_database(db_name: str, table_name: str, headers: list) -> None:
 
 
 def _insert_data(
-    db_name: str, table_name: str, fresh_data: list[dict], headers: list) -> None:
+    db_name: str, table_name: str, fresh_data: list[dict], headers: list) -> int:
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     
+    inserted_count = 0
+
     for data in fresh_data:
         cursor.execute(
             f"""
@@ -25,9 +27,12 @@ def _insert_data(
             """,
             (data[headers[0]], data[headers[1]], data[headers[2]], data[headers[3]])
         )
-    
+        
+        inserted_count += cursor.rowcount
+
     conn.commit()
     conn.close()
+    return inserted_count
 
 
 def _fetch_existing_data(db_name: str, table_name: str, headers: list) -> set:
@@ -59,8 +64,10 @@ def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict]
     _create_database(db_name, table_name, headers)
     existing_data = _fetch_existing_data(db_name, table_name, headers)
     fresh_data = _remove_duplicates(data_with_duplicates, headers, existing_data)
-    
-    summary.append(f"{table_name:<20} {len(fresh_data)} new of {len(data_with_duplicates)} items")
-    
+        
     if fresh_data:
-        _insert_data(db_name, table_name, fresh_data, headers)
+        inserted_count = _insert_data(db_name, table_name, fresh_data, headers)
+    else:
+        inserted_count = 0
+
+    summary.append(f"{table_name:<20} {inserted_count} new of {len(data_with_duplicates)} items")
