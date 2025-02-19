@@ -32,11 +32,6 @@ However, please note:
 ## 📂 Installation & Usage  
 
 ### 🔹 1. Clone the Repository  
-```sh
-git clone https://github.com/yourusername/Scraper_v2.git
-cd Scraper_v2
-```
-
 ### 🔹 2. Install Required Packages  
 ```sh
 pip install -r requirements.txt
@@ -55,7 +50,7 @@ Ensure that `chromedriver.exe` is **added to your system's PATH** or placed in t
 ### ▶️ **Running the Scraper with a `.bat` File**
 Create a `.bat` file with the following content:  
 ```batch
-python scraper.py ^
+python scraper_v2.py ^
 --searches="C:/path/to/example.json" ^
 --db_name=database_1
 ```
@@ -93,12 +88,12 @@ Save the following JSON structure in a file (e.g., `config.json`):
 ### ▶️ **Running the Scraper from the Command Line**
 Run the scraper with a JSON config file:  
 ```sh
-python scraper.py --searches="C:/path/to/config.json" --db_name=my_database
+python scraper_v2.py --searches="C:/path/to/config.json" --db_name=my_database
 ```
 
 Or use inline parameters:  
 ```sh
-python scraper.py --searches="[{
+python scraper_v2.py --searches="[{
     \"searched_phrase\": \"laptop\", 
     \"min_price\": 10, 
     \"max_price\": 1000, 
@@ -114,7 +109,7 @@ python scraper.py --searches="[{
 ### ℹ️ **Additional Help**
 To see available options and usage instructions, run:  
 ```sh
-python scraper.py --help
+python scraper_v2.py --help
 ```
 ---
 
