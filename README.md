@@ -86,22 +86,9 @@ Save the following JSON structure in a file (e.g., `config.json`):
 ---
 
 ### ▶️ **Running the Scraper from the Command Line**
-Run the scraper with a JSON config file:  
+Run the scraper with only one config:  
 ```sh
-python scraper_v2.py --searches="C:/path/to/config.json" --db_name=my_database
-```
-
-Or use inline parameters:  
-```sh
-python scraper_v2.py --searches="[{
-    \"searched_phrase\": \"laptop\", 
-    \"min_price\": 10, 
-    \"max_price\": 1000, 
-    \"only_new\": false, 
-    \"max_page\": 5, 
-    \"unwanted_phrases\": \"\", 
-    \"by_date\": true
-}]" --db_name=database_2
+python scraper_v2.py --searches="[{\"searched_phrase\":\"laptop\",\"min_price\":10,\"max_price\":1000,\"only_new\":false,\"max_page\":5,\"unwanted_phrases\":\"\",\"by_date\":true}]" --db_name=database_2
 ```
 
 ---
