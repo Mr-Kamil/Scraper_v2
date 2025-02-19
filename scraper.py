@@ -6,40 +6,40 @@ import argparse
 import json
 
 
-def parse_arguments():
+def _parse_arguments():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--searches', required=False, 
+    parser.add_argument('--searches', required=True, 
                         help='JSON string or file path')
-    parser.add_argument('--filename', required=False, default='occasions', 
-                        help='Filename without extension, to save scraped data')
+    parser.add_argument('--db_name', required=False, default='occasions', 
+                        help='Database name without extension, to save scraped data')
 
     global args
     args = parser.parse_args()
     
     if os.path.exists(args.searches):
-        with open(args.searches, 'r') as f:
-            args.searches = json.load(f)
+        with open(args.searches, 'r') as file:
+            args.searches = json.load(file)
     else:
         args.searches = json.loads(args.searches)
 
     return args
 
 
-def get_filename():
-    return args.filename
+def _get_db_name():
+    return args.db_name
 
 
-def get_unwanted_phrase(config):
-    if config["unwanted_phrase"]:
-        unwanted_phrase = config["unwanted_phrase"].split("-")
+def _get_unwanted_phrases(config):
+    if config["unwanted_phrases"]:
+        unwanted_phrases = config["unwanted_phrases"].split("-")
     else:
-        unwanted_phrase = []
+        unwanted_phrases = []
 
-    return unwanted_phrase
+    return unwanted_phrases
 
 
-def print_init_info(json_data):
+def _print_init_info(json_data):
     for index, search_config in enumerate(json_data):
         print(f"\nSearch Configuration {index + 1}:")
         print(
@@ -48,17 +48,17 @@ def print_init_info(json_data):
             'max price: ', search_config["max_price"], '\n',
             'only new: ', search_config["only_new"], '\n',
             'max page: ', search_config["max_page"], '\n',
-            'unwanted phrase: ', search_config["unwanted_phrase"], '\n',
+            'unwanted phrase: ', search_config["unwanted_phrases"], '\n',
             'by_date: ', search_config["by_date"],
         )
 
 
-def open_database(filename):
+def _open_database(db_name):
     current_directory = os.getcwd()
-    os.system(r'start ' + rf"{current_directory}\{filename}.db")
+    os.system(r'start ' + rf"{current_directory}\{db_name}.db")
 
 
-def create_website_instance(website_class, json):
+def _create_website_instance(website_class, json):
     return website_class(
         json["searched_phrase"], 
         json["min_price"], 
@@ -68,12 +68,12 @@ def create_website_instance(website_class, json):
     )
 
 
-def create_occasion_list(websites, headers, config):
+def _create_occasion_list(websites, headers, config):
     occasion_list = []
     for website in websites:
         print()
         occasions = get_occasions(
-            headers, website, get_unwanted_phrase(config), config['max_page']
+            headers, website, _get_unwanted_phrases(config), config['max_page']
             )
         for occasion in occasions:
             occasion_list.append(occasion)
@@ -88,33 +88,32 @@ def _create_table_name(raw_name):
 def main():
     HEADERS = ['TITLE', 'PRICE', 'URL', 'DATE']
 
-    parse_arguments()
+    _parse_arguments()
 
     search_configs = args.searches
-    print_init_info(search_configs)
-    filename = get_filename()
-    print(f"\nOutput database file name: {filename}")
+    _print_init_info(search_configs)
+    db_name = _get_db_name()
+    print(f"\nOutput database file name: {db_name}.db")
 
     summary = []
 
     for index, config in enumerate(search_configs):
         print(f"\n\nProcessing search {index + 1}: {config}")
 
-        olx = create_website_instance(Olx, config)
-        allegro_lokalnie = create_website_instance(AllegroLokalnie, config)
-        allegro = create_website_instance(Allegro, config)
+        olx = _create_website_instance(Olx, config)
+        allegro_lokalnie = _create_website_instance(AllegroLokalnie, config)
+        allegro = _create_website_instance(Allegro, config)
 
-        # occasion_list = create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
-        occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS, config)
+        occasion_list = _create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
 
         table_name = _create_table_name(config["searched_phrase"])
-        process_data(f"{filename}.db", table_name, occasion_list, HEADERS, summary)
+        process_data(f"{db_name}.db", table_name, occasion_list, HEADERS, summary)
 
     print('\nAll searches processed. \nDONE\n')
     print('table name:')
     print(*summary, sep='\n')
 
-    open_database(filename)
+    _open_database(db_name)
 
 
 if __name__ == '__main__':

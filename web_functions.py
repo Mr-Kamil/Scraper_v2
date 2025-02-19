@@ -1,6 +1,7 @@
 import datetime
 import re
 import sys
+from typing import Generator
 
 
 if sys.flags.debug:
@@ -33,14 +34,14 @@ def _get_data_from_web(next_url: str, website: object) -> list[dict]:
     return data_list
 
 
-def _validate_unwanted_phrase(
-        title: str, unwanted_phrase: list
+def _validate_unwanted_phrases(
+        title: str, unwanted_phrases: list
         ) -> bool:
     
-    if not unwanted_phrase:
+    if not unwanted_phrases:
         return True
     
-    for expression in unwanted_phrase:
+    for expression in unwanted_phrases:
         if re.search(expression, title, re.IGNORECASE):
             return False
     return True
@@ -73,11 +74,11 @@ def _format_data(
 
 
 def _validate_data(
-        titles: list, website: object, data_headers: list, unwanted_phrase: str, 
-        prices: list, urls: list) -> dict:
+        titles: list, website: object, data_headers: list, unwanted_phrases: str, 
+        prices: list, urls: list) -> Generator[dict, dict, dict]:
     
     for n in range(len(titles)):
-        if _validate_unwanted_phrase(titles[n], unwanted_phrase):
+        if _validate_unwanted_phrases(titles[n], unwanted_phrases):
             if _validate_searched_phrase(titles[n], website):
                 try:
                     price = int(re.match(r'\d+', prices[n].replace(' ', '')).group(0))
@@ -101,7 +102,7 @@ def _get_max_page(web_max_page: list, inserted_max_page: int) -> int:
     return max_page
 
 
-def ensure_data_are_correct(titles, prices, urls):
+def _ensure_data_are_correct(titles, prices, urls):
     if not (len(titles) == len(prices) == len(urls)):
         raise Exception(
             f"Incorrect scraped data:\n"
@@ -138,13 +139,13 @@ def get_occasions(
             if page_num == 1:
                 max_page = _get_max_page(web_max_pages, max_page)
 
-            ensure_data_are_correct(titles, prices, urls)
+            _ensure_data_are_correct(titles, prices, urls)
 
             for data in _validate_data(
                 titles=titles, 
                 website=website, 
                 data_headers=data_headers, 
-                unwanted_phrase=unwanted_phrase, 
+                unwanted_phrases=unwanted_phrase, 
                 prices=prices, 
                 urls=urls
                 ):
