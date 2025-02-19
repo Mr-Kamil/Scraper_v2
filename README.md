@@ -68,12 +68,12 @@ Save the following JSON structure in a file (e.g., `config.json`):
 ```json
 [
     {
-        "searched_phrase": "laptop",
+        "searched_phrase": "laptop-MSI-RTX",
         "min_price": 10,
         "max_price": 1000,
         "only_new": false,
         "max_page": 2,
-        "unwanted_phrases": "broken,damaged",
+        "unwanted_phrases": "broken-damaged",
         "by_date": true
     },
     {
@@ -82,7 +82,7 @@ Save the following JSON structure in a file (e.g., `config.json`):
         "max_price": 2000,
         "only_new": true,
         "max_page": 4,
-        "unwanted_phrases": "cracked,defective",
+        "unwanted_phrases": "defective",
         "by_date": false
     }
 ]
