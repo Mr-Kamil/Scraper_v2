@@ -1,7 +1,7 @@
 import os
 from websites import *
 from web_functions import get_occasions
-from data_functions import process_data
+from db_functions import process_data
 import argparse
 import json
 
