@@ -55,10 +55,12 @@ def _remove_duplicates(data_list: list[dict], headers: list,
 
 
 def process_data(db_name: str, table_name: str, data_with_duplicates: list[dict], 
-                 headers: list) -> None:
+                 headers: list, summary: list) -> None:
     _create_database(db_name, table_name, headers)
     existing_data = _fetch_existing_data(db_name, table_name, headers)
     fresh_data = _remove_duplicates(data_with_duplicates, headers, existing_data)
+    
+    summary.append(f"{table_name:<20} {len(fresh_data)} new of {len(data_with_duplicates)} items")
     
     if fresh_data:
         _insert_data(db_name, table_name, fresh_data, headers)

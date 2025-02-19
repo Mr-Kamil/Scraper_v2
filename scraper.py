@@ -108,9 +108,7 @@ def main():
         occasion_list = create_occasion_list((olx, allegro_lokalnie), HEADERS, config)
 
         table_name = _create_table_name(config["searched_phrase"])
-        process_data(f"{filename}.db", table_name, occasion_list, HEADERS)
-        summary.append(f"{table_name:<20} {len(occasion_list)} new items")
-
+        process_data(f"{filename}.db", table_name, occasion_list, HEADERS, summary)
 
     print('\nAll searches processed. \nDONE\n')
     print('table name:')
