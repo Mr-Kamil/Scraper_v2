@@ -1,5 +1,5 @@
 # Scraper_v2 - A web scraper for OLX, Allegro, and Allegro Lokalnie
-# Copyright (C) 2024 Kamil Bylinka
+# Copyright (C) 2024 Kamil Bylinka https://github.com/Mr-Kamil
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
