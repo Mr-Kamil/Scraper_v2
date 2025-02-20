@@ -22,6 +22,8 @@ from db_functions import process_data
 import argparse
 import json
 
+_replace_spaces = lambda x: x.replace(' ', '-')
+
 
 def _parse_arguments():
     parser = argparse.ArgumentParser()
@@ -49,7 +51,7 @@ def _get_db_name():
 
 def _get_unwanted_phrases(config):
     if config["unwanted_phrases"]:
-        unwanted_phrases = config["unwanted_phrases"].split("-")
+        unwanted_phrases = _replace_spaces(config["unwanted_phrases"]).split("-")
     else:
         unwanted_phrases = []
 
@@ -77,7 +79,7 @@ def _open_database(db_name):
 
 def _create_website_instance(website_class, json):
     return website_class(
-        json["searched_phrase"], 
+        _replace_spaces(json["searched_phrase"]), 
         json["min_price"], 
         json["max_price"], 
         json["only_new"],
@@ -123,7 +125,7 @@ def main():
 
         occasion_list = _create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
 
-        table_name = _create_table_name(config["searched_phrase"])
+        table_name = _create_table_name(_replace_spaces(config["searched_phrase"]))
         process_data(f"{db_name}.db", table_name, occasion_list, HEADERS, summary)
 
     print('\nAll searches processed. \nDONE\n')
