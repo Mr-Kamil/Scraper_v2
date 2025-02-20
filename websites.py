@@ -230,7 +230,7 @@ class AllegroLokalnie(Website):
                 json.loads(soup.find(tags[0], {tags[1]: True})[tags[1]]) [tags[2]]
                     )
         except:
-            print('An error occured during parsing max_page Olx')
+            print(f'An error occured during parsing max_page {self}')
             return 1
 
 
