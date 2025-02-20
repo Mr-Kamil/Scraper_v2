@@ -104,7 +104,5 @@ python scraper_v2.py --help
 📌 This project is **open-source** and licensed under the **GNU General Public License v3.0 (GPL v3)**.  
 You are free to use, modify, and distribute it, but **any modifications must also be open-source under the same license**.  
 
-For full details, see the [GPL v3 License](https://www.gnu.org/licenses/gpl-3.0.html).  
-
 Feel free to contribute and improve it! 🚀
 
