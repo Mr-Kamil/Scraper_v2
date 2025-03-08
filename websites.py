@@ -58,7 +58,8 @@ class Olx(Website):
         # 'urls': ['a', 'css-rc5s2u'],
         # 'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
         'urls': ['div', 'css-u2ayx9', 'a', 'css-qo0cxu'],
-        'max_page': ['a', "css-1mi714g"],
+        # 'max_page': ['a', "css-1mi714g"],
+        'max_page': [{"data-testid": re.compile(r"pagination-link-\d+")}],
         }
     NAME = 'Olx'
 
@@ -126,11 +127,10 @@ class Olx(Website):
 
         return urls
 
+
     def read_max_page(self, soup: object) -> list:
-        tags = self.HTML_TAGS['max_page']
-        return(
-            [a.get_text() for a in soup.find_all(tags[0], class_=tags[1])]
-            )
+        tag_attrs = self.HTML_TAGS['max_page'][0]
+        return [a.get_text() for a in soup.find_all("a", attrs=tag_attrs)]
 
 
     def get_soup(self, url, parser='html.parser') -> object:
