@@ -58,7 +58,8 @@ class Olx(Website):
         'prices': ['p', 'css-6j1qjp'],
         # 'urls': ['a', 'css-rc5s2u'],
         # 'urls': ['div', 'css-u2ayx9', 'a', 'css-z3gu2d'],
-        'urls': ['div', 'css-u2ayx9', 'a', 'css-qo0cxu'],
+        # 'urls': ['div', 'css-u2ayx9', 'a', 'css-qo0cxu'],
+        'urls': ['div', 'css-u2ayx9', 'a', 'css-1tqlkj0'],
         # 'max_page': ['a', "css-1mi714g"],
         'max_page': [{"data-testid": re.compile(r"pagination-link-\d+")}],
         }
