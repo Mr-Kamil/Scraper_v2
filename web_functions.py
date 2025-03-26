@@ -21,7 +21,7 @@ class CaptchaRequiredException(Exception):
 
 def _get_data_from_web(next_url: str, website: object) -> list[dict]:
     soup = website.get_soup(next_url)
-    debug(soup)
+    # debug(soup)
     _ensure_soup_is_correct(soup)
     data_list = []
 

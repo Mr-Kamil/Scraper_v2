@@ -115,6 +115,8 @@ def main():
     print(f"\nOutput database file name: {db_name}.db")
 
     summary = []
+    all_occasions = []
+    inserted_data = []
 
     for index, config in enumerate(search_configs):
         print(f"\n\nProcessing search {index + 1}: {config}")
@@ -126,12 +128,14 @@ def main():
         occasion_list = _create_occasion_list((olx, allegro_lokalnie, allegro), HEADERS, config)
 
         table_name = _create_table_name(_replace_spaces(config["searched_phrase"]))
-        process_data(f"{db_name}.db", table_name, occasion_list, HEADERS, summary)
+        process_data(f"{db_name}.db", table_name, occasion_list, HEADERS, summary, inserted_data)
+        all_occasions.extend(occasion_list)
 
     print('\nAll searches processed. \nDONE\n')
     print('table name:')
     print(*summary, sep='\n')
 
+    process_data(f"{db_name}.db", 'NEWEST', inserted_data, HEADERS, [], [], erase=True)
     _open_database(db_name)
 
 
